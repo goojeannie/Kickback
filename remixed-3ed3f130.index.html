@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickback Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .dashboard-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .dashboard-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            min-width: 200px;
+        }
+        
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .dashboard-btn.active {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: scale(1.05);
+        }
+        
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+            border: 2px solid #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .content-area {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            min-height: 600px;
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .parts-container {
+            border: 2px dashed #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .part-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .add-part-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+        
+        .remove-part-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            float: right;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .dashboard-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .partners-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .partners-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .partners-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-signed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-for-sale {
+            background: #e7f3ff;
+            color: #0066cc;
+        }
+        
+        .status-sold {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .action-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 0.9em;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(102, 126, 234, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-area:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .success-banner {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #155724;
+        }
+        
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .step-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        
+        .step-circle.completed {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .step-circle.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .referral-banner {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .direct-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .commission-info {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .earnings-card {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+        
+        .parts-card {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+        
+        .sales-card {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+        
+        .pending-card {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .logo {
+                font-size: 2em;
+            }
+            
+            .dashboard-selector {
+                gap: 10px;
+            }
+            
+            .dashboard-btn {
+                padding: 12px 20px;
+                font-size: 1em;
+                min-width: 150px;
+            }
+            
+            .main-nav {
+                gap: 8px;
+            }
+            
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">KICKBACK</div>
+            <div class="tagline">Parts Consignment Management System</div>
+            
+            <!-- Dashboard Selector -->
+            <div class="dashboard-selector">
+                <button class="dashboard-btn active" onclick="switchDashboard('partner')">
+                    👤 Partner Dashboard
+                </button>
+                <button class="dashboard-btn" onclick="switchDashboard('internal')">
+                    🏢 Kickback Internal
+                </button>
+            </div>
+        </div>
+
+        <!-- PARTNER DASHBOARD -->
+        <div id="partner-dashboard" class="dashboard active">
+            <div class="main-nav">
+                <button class="nav-btn active" onclick="showPartnerSection('intake')">New Parts Intake</button>
+                <button class="nav-btn" onclick="showPartnerSection('my-parts')">My Parts</button>
+                <button class="nav-btn" onclick="showPartnerSection('earnings')">Earnings</button>
+                <button class="nav-btn" onclick="showPartnerSection('agreements')">Agreements</button>
+                <button class="nav-btn" onclick="showPartnerSection('profile')">Profile</button>
+            </div>
+
+            <div class="content-area">
+                <!-- Partner Intake Section -->
+                <div id="partner-intake" class="section active">
+                    <h2>Consign Your Parts with Kickback</h2>
+                    
+                    <!-- QR Code Detection Banner - Shows for QR referrals -->
+                    <div id="qrCodeBanner" class="referral-banner" style="display: none;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">🎯</div>
+                            <div>
+                                <div style="font-weight: bold; font-size: 1.2em;" id="referrerName">Referred by: AutoShop Pro</div>
+                                <div style="opacity: 0.9;" id="commissionText">Your referrer will earn 5% commission on your sales!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct Visit Banner - Shows for non-QR visitors -->
+                    <div id="directVisitSection" class="direct-banner">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 2em;">🌐</div>
+                            <div>
+                                <div style="font-weight: bold; font-size: 1.2em;">Welcome to Kickback!</div>
+                                <div style="opacity: 0.9;">Turn your unused automotive parts into cash</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="partnerIntakeForm">
+                        <div class="form-grid">
+                            <div>
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" id="partnerEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Name *</label>
+                                    <input type="text" id="partnerName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Number *</label>
+                                    <input type="tel" id="partnerPhone" required>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- QR Code Referral Info - Only shows for QR code visitors -->
+                                <div id="qrReferralInfo" class="form-group" style="display: none;">
+                                    <label>Referral Source</label>
+                                    <input type="text" id="qrReferralDisplay" readonly style="background: #f0f0f0; cursor: not-allowed;" value="Shop Partner: AutoShop Pro (QR-SHOP-001)">
+                                    <small style="color: #666; display: block; margin-top: 5px;">✅ Referral source automatically detected</small>
+                                </div>
+
+                                <!-- Direct Visit - How did you hear about us -->
+                                <div id="directReferralInfo" class="form-group">
+                                    <label>How did you hear about us? *</label>
+                                    <select id="partnerReferralSource" required>
+                                        <option value="">Please select...</option>
+                                        <option value="online">Online Search (Google, Bing, etc.)</option>
+                                        <option value="social">Social Media (Facebook, Instagram, etc.)</option>
+                                        <option value="referral">Word of Mouth Referral</option>
+                                        <option value="walkin">Walk-in to Physical Location</option>
+                                        <option value="advertisement">Advertisement (Radio, Print, etc.)</option>
+                                        <option value="automotive-forum">Automotive Forum/Community</option>
+                                        <option value="car-show">Car Show/Event</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Banking Information</label>
+                                    <input type="text" placeholder="Bank Name" style="margin-bottom: 10px;">
+                                    <input type="text" placeholder="Account Number" style="margin-bottom: 10px;">
+                                    <input type="text" placeholder="Routing Number">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Parts Information</h3>
+                        <div class="parts-container">
+                            <button type="button" class="add-part-btn" onclick="addPartItem()">+ Add Another Part</button>
+                            <div id="partsContainer">
+                                <div class="part-item">
+                                    <button type="button" class="remove-part-btn" onclick="removePart(this)">Remove</button>
+                                    <div class="form-grid">
+                                        <div>
+                                            <div class="form-group">
+                                                <label>Type of Part</label>
+                                                <select>
+                                                    <option>Engine</option>
+                                                    <option>Transmission</option>
+                                                    <option>Suspension</option>
+                                                    <option>Brakes</option>
+                                                    <option>Exhaust</option>
+                                                    <option>Exterior Body Panel</option>
+                                                    <option>Interior Trim</option>
+                                                    <option>Electrical Component</option>
+                                                    <option>Lighting</option>
+                                                    <option>Wheels/Tires</option>
+                                                    <option>Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Brand</label>
+                                                <input type="text" placeholder="e.g., OEM, KW, Bilstein">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-group">
+                                                <label>Product Name</label>
+                                                <input type="text" placeholder="e.g., V3 Coilover Kit">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Condition</label>
+                                                <select>
+                                                    <option>New</option>
+                                                    <option>Like New</option>
+                                                    <option>Excellent</option>
+                                                    <option>Good</option>
+                                                    <option>Fair</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Additional Notes</label>
+                                        <textarea rows="3" placeholder="e.g., Used for 3 months, minor rust on bracket"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Upload Photos (Max 5)</label>
+                                        <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                                            <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                                            <p>📷 Click to upload photos or drag and drop</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="submit-btn" onclick="submitPartnerIntake()">Submit Parts for Consignment</button>
+                    </form>
+                </div>
+
+                <!-- My Parts Section -->
+                <div id="partner-my-parts" class="section">
+                    <h2>My Consigned Parts</h2>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Part</th>
+                                <th>Condition</th>
+                                <th>Status</th>
+                                <th>Listed Price</th>
+                                <th>Days Listed</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>KW V3 Coilover Kit</strong><br><small>Suspension • Excellent</small></td>
+                                <td>Excellent</td>
+                                <td><span class="status-badge status-for-sale">For Sale</span></td>
+                                <td>$1,200</td>
+                                <td>12 days</td>
+                                <td>
+                                    <button class="action-btn">View Listing</button>
+                                    <button class="action-btn">Request Return</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Brembo GT Brake Kit</strong><br><small>Brakes • Like New</small></td>
+                                <td>Like New</td>
+                                <td><span class="status-badge status-sold">Sold</span></td>
+                                <td>$850</td>
+                                <td>8 days</td>
+                                <td>
+                                    <button class="action-btn">View Sale Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Akrapovic Exhaust</strong><br><small>Exhaust • Good</small></td>
+                                <td>Good</td>
+                                <td><span class="status-badge status-pending">Agreement Pending</span></td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>
+                                    <button class="action-btn">Sign Agreement</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Earnings Section -->
+                <div id="partner-earnings" class="section">
+                    <h2>My Earnings</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card earnings-card">
+                            <div class="dashboard-number">$595</div>
+                            <div>Total Earnings</div>
+                        </div>
+                        <div class="dashboard-card parts-card">
+                            <div class="dashboard-number">3</div>
+                            <div>Parts Consigned</div>
+                        </div>
+                        <div class="dashboard-card sales-card">
+                            <div class="dashboard-number">1</div>
+                            <div>Parts Sold</div>
+                        </div>
+                        <div class="dashboard-card pending-card">
+                            <div class="dashboard-number">$0</div>
+                            <div>Pending Payment</div>
+                        </div>
+                    </div>
+
+                    <h3>Payment History</h3>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Part Sold</th>
+                                <th>Sale Price</th>
+                                <th>Your Share</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-08-05</td>
+                                <td>Brembo GT Brake Kit</td>
+                                <td>$850</td>
+                                <td>$595</td>
+                                <td><span class="status-badge status-signed">Paid</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="commission-info">
+                        <h4>💰 Commission Structure</h4>
+                        <ul>
+                            <li><strong>$250 or less:</strong> You keep 60% of sale price</li>
+                            <li><strong>$250.01 to $500:</strong> You keep 65% of sale price</li>
+                            <li><strong>$500.01 and above:</strong> You keep 70% of sale price</li>
+                        </ul>
+                        <p><strong>Payment Schedule:</strong> Bi-weekly payments via bank wire transfer</p>
+                    </div>
+                </div>
+
+                <!-- Agreements Section -->
+                <div id="partner-agreements" class="section">
+                    <h2>My Agreements</h2>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Agreement Type</th>
+                                <th>Date Created</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Individual Partner Agreement</strong><br><small>Main consignment agreement</small></td>
+                                <td>2025-08-01</td>
+                                <td><span class="status-badge status-signed">Signed</span></td>
+                                <td>
+                                    <button class="action-btn">View PDF</button>
+                                    <button class="action-btn">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parts Agreement #PA-001</strong><br><small>KW V3 Coilover Kit</small></td>
+                                <td>2025-08-01</td>
+                                <td><span class="status-badge status-signed">Signed</span></td>
+                                <td>
+                                    <button class="action-btn">View PDF</button>
+                                    <button class="action-btn">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parts Agreement #PA-002</strong><br><small>Brembo GT Brake Kit</small></td>
+                                <td>2025-08-01</td>
+                                <td><span class="status-badge status-signed">Signed</span></td>
+                                <td>
+                                    <button class="action-btn">View PDF</button>
+                                    <button class="action-btn">Download</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parts Agreement #PA-003</strong><br><small>Akrapovic Exhaust</small></td>
+                                <td>2025-08-08</td>
+                                <td><span class="status-badge status-pending">Pending Signature</span></td>
+                                <td>
+                                    <button class="action-btn">Sign Now</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="partner-profile" class="section">
+                    <h2>My Profile</h2>
+                    <div class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label>Partner ID</label>
+                                <input type="text" value="KICK-IND-001" readonly style="background: #f0f0f0;">
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" value="John Smith">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="john.smith@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" value="(555) 123-4567">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label>Member Since</label>
+                                <input type="text" value="August 1, 2025" readonly style="background: #f0f0f0;">
+                            </div>
+                            <div class="form-group">
+                                <label>Bank Name</label>
+                                <input type="text" value="Chase Bank">
+                            </div>
+                            <div class="form-group">
+                                <label>Account Number</label>
+                                <input type="text" value="****1234" readonly style="background: #f0f0f0;">
+                            </div>
+                            <div class="form-group">
+                                <label>Routing Number</label>
+                                <input type="text" value="****5678" readonly style="background: #f0f0f0;">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="submit-btn">Update Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KICKBACK INTERNAL DASHBOARD -->
+        <div id="internal-dashboard" class="dashboard">
+            <div class="main-nav">
+                <button class="nav-btn active" onclick="showInternalSection('overview')">Dashboard Overview</button>
+                <button class="nav-btn" onclick="showInternalSection('partner-management')">Partner Management</button>
+                <button class="nav-btn" onclick="showInternalSection('inventory')">Inventory Management</button>
+                <button class="nav-btn" onclick="showInternalSection('agreements')">Agreement Templates</button>
+                <button class="nav-btn" onclick="showInternalSection('integrations')">Integrations</button>
+                <button class="nav-btn" onclick="showInternalSection('analytics')">Analytics</button>
+            </div>
+
+            <div class="content-area">
+                <!-- Overview Section -->
+                <div id="internal-overview" class="section active">
+                    <h2>Kickback Internal Dashboard</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="dashboard-number">47</div>
+                            <div>Active Partners</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-number">234</div>
+                            <div>Parts in Consignment</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-number">12</div>
+                            <div>Pending Agreements</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-number">$87,432</div>
+                            <div>Monthly Revenue</div>
+                        </div>
+                    </div>
+
+                    <h3>Recent Activity</h3>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Partner</th>
+                                <th>Action</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith</td>
+                                <td>New Parts Intake</td>
+                                <td><span class="status-badge status-pending">Processing</span></td>
+                                <td>2025-08-08</td>
+                                <td>
+                                    <button class="action-btn" onclick="showAgreementGeneration('john-smith')">Generate Agreements</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AutoShop Pro</td>
+                                <td>Partner Agreement</td>
+                                <td><span class="status-badge status-signed">Signed</span></td>
+                                <td>2025-08-07</td>
+                                <td>
+                                    <button class="action-btn">View Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Mike Johnson</td>
+                                <td>Parts Agreement</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>2025-08-06</td>
+                                <td>
+                                    <button class="action-btn">View Agreement</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Partner Management Section -->
+                <div id="internal-partner-management" class="section">
+                    <h2>Partner Management</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <input type="text" placeholder="Search partners..." style="max-width: 300px;">
+                        <select style="max-width: 200px;">
+                            <option>All Statuses</option>
+                            <option>Active</option>
+                            <option>Pending</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Partner Name</th>
+                                <th>Type</th>
+                                <th>Parts Count</th>
+                                <th>Agreement Status</th>
+                                <th>Referral Source</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith<br><small>KICK-IND-001</small></td>
+                                <td>Individual</td>
+                                <td>3 parts</td>
+                                <td><span class="status-badge status-pending">Agreements Pending</span></td>
+                                <td>QR-SHOP-001 (AutoShop Pro)</td>
+                                <td>
+                                    <button class="action-btn" onclick="showPartnerDetails('john-smith')">View Details</button>
+                                    <button class="action-btn" onclick="showAgreementGeneration('john-smith')">Generate Agreements</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AutoShop Pro<br><small>KICK-SHOP-001</small></td>
+                                <td>Shop Partner (Charter)</td>
+                                <td>15 parts</td>
+                                <td><span class="status-badge status-signed">All Signed</span></td>
+                                <td>Direct</td>
+                                <td>
+                                    <button class="action-btn" onclick="showPartnerDetails('autoshop-pro')">View Details</button>
+                                    <button class="action-btn">View Commissions</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sarah Wilson<br><small>KICK-IND-002</small></td>
+                                <td>Individual</td>
+                                <td>7 parts</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                                <td>QR-AMB-001 (Mike Johnson)</td>
+                                <td>
+                                    <button class="action-btn" onclick="showPartnerDetails('sarah-wilson')">View Details</button>
+                                    <button class="action-btn">Add Parts</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Recent Activity Section -->
+                    <h3 style="margin-top: 40px;">Recent Activity This Week</h3>
+                    <div style="background: #f8f9fa; border-radius: 15px; padding: 25px; margin-top: 20px;">
+                        
+                        <!-- Agreement Generation Activity -->
+                        <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #28a745; margin: 0;">✅ Agreement Generation Complete - John Smith</h4>
+                                <small style="color: #666;">2 hours ago</small>
+                            </div>
+                            <p style="margin-bottom: 15px; color: #666;">Agreements generated and sent to john.smith@email.com for electronic signature.</p>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: bold; color: #28a745;">Individual Partner Agreement</div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">📧 Sent via SignWell</div>
+                                    <div style="font-size: 0.9em; color: #856404;">⏰ Pending Signature</div>
+                                </div>
+                                <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: bold; color: #0066cc;">Parts Agreement #PA-001</div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">KW V3 Coilover Kit</div>
+                                    <div style="font-size: 0.9em; color: #856404;">⏰ Pending Signature</div>
+                                </div>
+                                <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-weight: bold; color: #ff8f00;">Parts Agreement #PA-002</div>
+                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Brembo Brake Kit</div>
+                                    <div style="font-size: 0.9em; color: #856404;">⏰ Pending Signature</div>
+                                </div>
+                            </div>
+                            
+                            <div style="background: #e8f5e8; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                                <strong>💰 Referral Commission: AutoShop Pro (QR-SHOP-001)</strong>
+                                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">5% commission rate • Estimated: $102.50</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <button class="action-btn" onclick="showPartnerDetails('john-smith')">View Full Details</button>
+                                <button class="action-btn">Send Manual Reminder</button>
+                            </div>
+                        </div>
+
+                        <!-- Other Recent Activities -->
+                        <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #17a2b8;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4 style="color: #17a2b8; margin: 0;">📋 New Parts Intake - Mike Johnson</h4>
+                                    <p style="margin: 5px 0 0 0; color: #666;">Submitted 2 new parts for consignment</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <small style="color: #666;">5 hours ago</small>
+                                    <div style="margin-top: 5px;">
+                                        <button class="action-btn">Process Intake</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 10px; padding: 20px; border-left: 4px solid #28a745;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4 style="color: #28a745; margin: 0;">✍️ Agreement Signed - Sarah Wilson</h4>
+                                    <p style="margin: 5px 0 0 0; color: #666;">Signed Parts Agreement #PA-015 for Turbo Kit</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <small style="color: #666;">1 day ago</small>
+                                    <div style="margin-top: 5px;">
+                                        <button class="action-btn">Add to Inventory</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partner Details View -->
+                <div id="partner-details" class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                        <h2 id="partner-details-title">Partner Details - John Smith</h2>
+                        <button class="action-btn" onclick="showInternalSection('partner-management')">← Back to Partner Management</button>
+                    </div>
+
+                    <!-- Partner Info Cards -->
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card earnings-card">
+                            <div class="dashboard-number">3</div>
+                            <div>Total Parts</div>
+                        </div>
+                        <div class="dashboard-card parts-card">
+                            <div class="dashboard-number">1</div>
+                            <div>Signed Agreements</div>
+                        </div>
+                        <div class="dashboard-card sales-card">
+                            <div class="dashboard-number">2</div>
+                            <div>Pending Signatures</div>
+                        </div>
+                        <div class="dashboard-card pending-card">
+                            <div class="dashboard-number">$102.50</div>
+                            <div>Referral Commission Due</div>
+                        </div>
+                    </div>
+
+                    <!-- Agreement Generation Status -->
+                    <div id="partner-agreement-status">
+                        <h3>Agreement Generation Complete</h3>
+                        <div class="success-banner">
+                            <h4 style="color: #155724; margin-bottom: 10px;">✅ Success!</h4>
+                            <p style="color: #155724;">Agreements have been generated and sent to <strong>john.smith@email.com</strong> for electronic signature.</p>
+                        </div>
+
+                        <div class="progress-tracker">
+                            <div class="progress-step">
+                                <div class="step-circle completed">1</div>
+                                <div>Partner Info</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-circle completed">2</div>
+                                <div>Parts Details</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-circle completed">3</div>
+                                <div>Agreement Generation</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-circle active">4</div>
+                                <div>E-Signature</div>
+                            </div>
+                            <div class="progress-step">
+                                <div class="step-circle">5</div>
+                                <div>Completed</div>
+                            </div>
+                        </div>
+
+                        <h4>Generated Documents</h4>
+                        <div class="dashboard-grid">
+                            <div class="dashboard-card" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                <h4>Individual Partner Agreement</h4>
+                                <p>Main consignment agreement</p>
+                                <div style="font-size: 0.9em; margin-top: 10px;">
+                                    <p>📧 Sent via SignWell</p>
+                                    <p>⏰ Status: Pending Signature</p>
+                                </div>
+                                <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                            </div>
+                            <div class="dashboard-card" style="background: linear-gradient(135deg, #17a2b8, #6f42c1);">
+                                <h4>Parts Agreement #PA-001</h4>
+                                <p>KW V3 Coilover Kit - Excellent</p>
+                                <div style="font-size: 0.9em; margin-top: 10px;">
+                                    <p>📧 Sent via SignWell</p>
+                                    <p>⏰ Status: Pending Signature</p>
+                                </div>
+                                <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                            </div>
+                            <div class="dashboard-card" style="background: linear-gradient(135deg, #fd7e14, #e83e8c);">
+                                <h4>Parts Agreement #PA-002</h4>
+                                <p>Brembo Brake Kit - Like New</p>
+                                <div style="font-size: 0.9em; margin-top: 10px;">
+                                    <p>📧 Sent via SignWell</p>
+                                    <p>⏰ Status: Pending Signature</p>
+                                </div>
+                                <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                            </div>
+                        </div>
+
+                        <h4>Commission Tracking</h4>
+                        <div class="commission-info">
+                            <h5>💰 Referral Commission: AutoShop Pro (QR-SHOP-001)</h5>
+                            <ul>
+                                <li><strong>Commission Rate:</strong> 5% (Shop Partner)</li>
+                                <li><strong>Estimated Commission:</strong> $102.50 (based on estimated sale values)</li>
+                                <li><strong>Payment Schedule:</strong> Bi-weekly with partner payments</li>
+                            </ul>
+                        </div>
+
+                        <h4>Next Steps</h4>
+                        <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">
+                                <div>
+                                    <strong>1. Email Notifications Sent</strong>
+                                    <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">Partner will receive emails with signature links for each document</p>
+                                </div>
+                                <span style="color: #4CAF50;">✓ Complete</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e0e0e0;">
+                                <div>
+                                    <strong>2. Automatic Reminders Scheduled</strong>
+                                    <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">Daily reminders will be sent if not signed within 3 days</p>
+                                </div>
+                                <span style="color: #ffc107;">⏰ Scheduled</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                                <div>
+                                    <strong>3. Parts Cataloging</strong>
+                                    <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">Once signed, parts will be added to inventory system</p>
+                                </div>
+                                <span style="color: #6c757d;">⏳ Pending</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button class="submit-btn" onclick="showInternalSection('partner-management')">Return to Partner Management</button>
+                            <button class="action-btn" style="margin-left: 15px;">Send Manual Reminder</button>
+                        </div>
+                    </div>
+
+                    <!-- Partner History -->
+                    <h3 style="margin-top: 40px;">Partner History</h3>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-08-08 14:32</td>
+                                <td>Agreement Generation</td>
+                                <td>Generated 3 agreements (1 partner + 2 parts)</td>
+                                <td><span class="status-badge status-pending">Pending Signatures</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-08-08 14:15</td>
+                                <td>Parts Intake</td>
+                                <td>Submitted 2 parts for consignment</td>
+                                <td><span class="status-badge status-completed">Processed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-08-08 14:00</td>
+                                <td>New Partner Registration</td>
+                                <td>Referred by AutoShop Pro (QR-SHOP-001)</td>
+                                <td><span class="status-badge status-completed">Complete</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Agreement Generation Results Section -->
+                <div id="agreement-generation" class="section">
+                    <h2>Agreement Generation Complete</h2>
+                    <div class="success-banner">
+                        <h3 style="color: #155724; margin-bottom: 10px;">✅ Success!</h3>
+                        <p style="color: #155724;">Agreements have been generated and sent to <strong>john.smith@email.com</strong> for electronic signature.</p>
+                    </div>
+
+                    <div class="progress-tracker">
+                        <div class="progress-step">
+                            <div class="step-circle completed">1</div>
+                            <div>Partner Info</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle completed">2</div>
+                            <div>Parts Details</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle completed">3</div>
+                            <div>Agreement Generation</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle active">4</div>
+                            <div>E-Signature</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle">5</div>
+                            <div>Completed</div>
+                        </div>
+                    </div>
+
+                    <h3>Generated Documents</h3>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                            <h4>Individual Partner Agreement</h4>
+                            <p>Main consignment agreement</p>
+                            <div style="font-size: 0.9em; margin-top: 10px;">
+                                <p>📧 Sent via SignWell</p>
+                                <p>⏰ Status: Pending Signature</p>
+                            </div>
+                            <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                        </div>
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #17a2b8, #6f42c1);">
+                            <h4>Parts Agreement #PA-001</h4>
+                            <p>KW V3 Coilover Kit - Excellent</p>
+                            <div style="font-size: 0.9em; margin-top: 10px;">
+                                <p>📧 Sent via SignWell</p>
+                                <p>⏰ Status: Pending Signature</p>
+                            </div>
+                            <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                        </div>
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #fd7e14, #e83e8c);">
+                            <h4>Parts Agreement #PA-002</h4>
+                            <p>Brembo Brake Kit - Like New</p>
+                            <div style="font-size: 0.9em; margin-top: 10px;">
+                                <p>📧 Sent via SignWell</p>
+                                <p>⏰ Status: Pending Signature</p>
+                            </div>
+                            <button class="action-btn" style="margin-top: 15px;">Preview Document</button>
+                        </div>
+                    </div>
+
+                    <h3>Commission Tracking</h3>
+                    <div class="commission-info">
+                        <h4>💰 Referral Commission: AutoShop Pro (QR-SHOP-001)</h4>
+                        <ul>
+                            <li><strong>Commission Rate:</strong> 5% (Shop Partner)</li>
+                            <li><strong>Estimated Commission:</strong> $102.50 (based on estimated sale values)</li>
+                            <li><strong>Payment Schedule:</strong> Bi-weekly with partner payments</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button class="submit-btn" onclick="showInternalSection('partner-management')">Return to Partner Management</button>
+                        <button class="action-btn" style="margin-left: 15px;">Send Manual Reminder</button>
+                    </div>
+                </div>
+
+                <!-- Inventory Management Section -->
+                <div id="internal-inventory" class="section">
+                    <h2>Inventory Management</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card parts-card">
+                            <div class="dashboard-number">234</div>
+                            <div>Total Parts</div>
+                        </div>
+                        <div class="dashboard-card earnings-card">
+                            <div class="dashboard-number">187</div>
+                            <div>For Sale</div>
+                        </div>
+                        <div class="dashboard-card sales-card">
+                            <div class="dashboard-number">47</div>
+                            <div>Sold This Month</div>
+                        </div>
+                        <div class="dashboard-card pending-card">
+                            <div class="dashboard-number">23</div>
+                            <div>Pending Agreements</div>
+                        </div>
+                    </div>
+
+                    <!-- Airtable Integration Workflow -->
+                    <h3>Airtable Inventory Workflow</h3>
+                    <div style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #667eea;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4>📊 Live Airtable Integration</h4>
+                            <div>
+                                <button class="action-btn" onclick="openAirtable()">Open Airtable</button>
+                                <button class="action-btn" onclick="syncAirtable()">Sync Now</button>
+                                <button class="action-btn" onclick="showAirtableWorkflow()">View Workflow</button>
+                            </div>
+                        </div>
+                        <p style="color: #666;">All parts data automatically flows from partner intake forms to Airtable inventory system via Zapier automation.</p>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                            <h5>Data Flow: Partner Intake → Airtable</h5>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                                <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; text-align: center;">
+                                    <strong>1. Form Submission</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Partner submits parts via intake form</p>
+                                </div>
+                                <div style="background: #fff3e0; padding: 10px; border-radius: 6px; text-align: center;">
+                                    <strong>2. Zapier Trigger</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Automation creates Airtable records</p>
+                                </div>
+                                <div style="background: #e8f5e8; padding: 10px; border-radius: 6px; text-align: center;">
+                                    <strong>3. Inventory Record</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Each part gets unique Airtable entry</p>
+                                </div>
+                                <div style="background: #f3e5f5; padding: 10px; border-radius: 6px; text-align: center;">
+                                    <strong>4. Status Tracking</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Real-time status updates</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Airtable Fields Mapping -->
+                        <div id="airtable-workflow-details" style="display: none;">
+                            <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                                <h5>Airtable Fields Created from Intake Form</h5>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                                    <div>
+                                        <h6>Partner Information</h6>
+                                        <ul style="margin: 10px 0; font-size: 0.9em;">
+                                            <li><strong>Partner ID:</strong> KICK-IND-001</li>
+                                            <li><strong>Partner Name:</strong> John Smith</li>
+                                            <li><strong>Email:</strong> john.smith@email.com</li>
+                                            <li><strong>Phone:</strong> (555) 123-4567</li>
+                                            <li><strong>Partner Type:</strong> Individual</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h6>Part Details</h6>
+                                        <ul style="margin: 10px 0; font-size: 0.9em;">
+                                            <li><strong>Part ID:</strong> PA-001, PA-002</li>
+                                            <li><strong>Part Type:</strong> Suspension, Brakes</li>
+                                            <li><strong>Brand:</strong> KW, Brembo</li>
+                                            <li><strong>Product Name:</strong> V3 Coilover Kit</li>
+                                            <li><strong>Condition:</strong> Excellent, Like New</li>
+                                            <li><strong>Description:</strong> Notes from form</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h6>Operational Data</h6>
+                                        <ul style="margin: 10px 0; font-size: 0.9em;">
+                                            <li><strong>Status:</strong> Agreement Pending</li>
+                                            <li><strong>Photos:</strong> Uploaded image URLs</li>
+                                            <li><strong>Date Added:</strong> Auto-timestamp</li>
+                                            <li><strong>Referral Source:</strong> QR-SHOP-001</li>
+                                            <li><strong>Commission Due:</strong> 5% to AutoShop Pro</li>
+                                            <li><strong>Estimated Value:</strong> TBD</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: white; border-radius: 8px; padding: 15px;">
+                                <h5>Airtable Status Workflow</h5>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                                    <span style="background: #fff3cd; color: #856404; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Agreement Pending</span>
+                                    <span style="font-size: 1.5em;">→</span>
+                                    <span style="background: #cce5ff; color: #004085; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Ready for Sale</span>
+                                    <span style="font-size: 1.5em;">→</span>
+                                    <span style="background: #e7f3ff; color: #0066cc; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Listed for Sale</span>
+                                    <span style="font-size: 1.5em;">→</span>
+                                    <span style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Sold</span>
+                                </div>
+                                <p style="text-align: center; margin-top: 15px; font-size: 0.9em; color: #666;">Status updates automatically sync between Airtable and both Partner/Internal dashboards</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Parts Inventory</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" placeholder="Search parts..." style="max-width: 250px;">
+                            <select style="max-width: 150px;">
+                                <option>All Status</option>
+                                <option>Agreement Pending</option>
+                                <option>Ready for Sale</option>
+                                <option>Listed for Sale</option>
+                                <option>Sold</option>
+                            </select>
+                            <select style="max-width: 150px;">
+                                <option>All Partners</option>
+                                <option>Individual</option>
+                                <option>Shop Partners</option>
+                            </select>
+                        </div>
+                        <button class="action-btn" onclick="exportInventory()">Export to CSV</button>
+                    </div>
+
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Part Details</th>
+                                <th>Partner</th>
+                                <th>Status</th>
+                                <th>Listed Price</th>
+                                <th>Days Listed</th>
+                                <th>Airtable Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>KW V3 Coilover Kit</strong><br>
+                                    <small>PA-001 • Suspension • Excellent</small><br>
+                                    <small style="color: #666;">Airtable ID: rec123ABC</small>
+                                </td>
+                                <td>John Smith<br><small>KICK-IND-001</small></td>
+                                <td><span class="status-badge status-for-sale">Listed for Sale</span></td>
+                                <td>$1,200</td>
+                                <td>12 days</td>
+                                <td>
+                                    <button class="action-btn" onclick="openAirtableRecord('rec123ABC')">View in Airtable</button>
+                                    <button class="action-btn">Mark Sold</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Brembo GT Brake Kit</strong><br>
+                                    <small>PA-002 • Brakes • Like New</small><br>
+                                    <small style="color: #666;">Airtable ID: rec456DEF</small>
+                                </td>
+                                <td>John Smith<br><small>KICK-IND-001</small></td>
+                                <td><span class="status-badge status-sold">Sold</span></td>
+                                <td>$850</td>
+                                <td>8 days</td>
+                                <td>
+                                    <button class="action-btn" onclick="openAirtableRecord('rec456DEF')">View in Airtable</button>
+                                    <button class="action-btn">Process Payment</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Akrapovic Exhaust</strong><br>
+                                    <small>PA-003 • Exhaust • Good</small><br>
+                                    <small style="color: #666;">Airtable ID: rec789GHI</small>
+                                </td>
+                                <td>John Smith<br><small>KICK-IND-001</small></td>
+                                <td><span class="status-badge status-pending">Agreement Pending</span></td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>
+                                    <button class="action-btn" onclick="openAirtableRecord('rec789GHI')">View in Airtable</button>
+                                    <button class="action-btn">Send Reminder</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Inventory Analytics -->
+                    <h3 style="margin-top: 40px;">Inventory Analytics</h3>
+                    <div style="background: white; border-radius: 10px; padding: 20px; margin-top: 20px; border: 2px solid #e0e0e0;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold; color: #667eea;">73%</div>
+                                <div style="color: #666;">Sell-Through Rate</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold; color: #4CAF50;">18</div>
+                                <div style="color: #666;">Avg. Days to Sale</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold; color: #FF9800;">$847</div>
+                                <div style="color: #666;">Avg. Sale Price</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold; color: #9C27B0;">94%</div>
+                                <div style="color: #666;">Data Sync Accuracy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agreement Templates Section -->
+                <div id="internal-agreements" class="section">
+                    <h2>Agreement Templates & Automation</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>Individual Partner Agreement</h3>
+                            <p>Main consignment agreement template</p>
+                            <div style="margin-top: 15px;">
+                                <button class="action-btn" onclick="previewTemplate('individual-partner')">Preview Template</button>
+                                <button class="action-btn">Edit Template</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Shop Partner Agreement</h3>
+                            <p>Commercial partnership template</p>
+                            <div style="margin-top: 15px;">
+                                <button class="action-btn" onclick="previewTemplate('shop-partner')">Preview Template</button>
+                                <button class="action-btn">Edit Template</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Parts Agreement</h3>
+                            <p>Individual part consignment template</p>
+                            <div style="margin-top: 15px;">
+                                <button class="action-btn" onclick="previewTemplate('parts-agreement')">Preview Template</button>
+                                <button class="action-btn">Edit Template</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Ambassador Agreement</h3>
+                            <p>Referral partner template</p>
+                            <div style="margin-top: 15px;">
+                                <button class="action-btn" onclick="previewTemplate('ambassador-agreement')">Preview Template</button>
+                                <button class="action-btn">Edit Template</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Template Merge Fields</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                        <p><strong>Available merge fields for all templates:</strong></p>
+                        <div style="columns: 3; margin-top: 10px; gap: 30px;">
+                            <p><code>{{partner_name}}</code></p>
+                            <p><code>{{partner_email}}</code></p>
+                            <p><code>{{partner_phone}}</code></p>
+                            <p><code>{{partner_id}}</code></p>
+                            <p><code>{{part_type}}</code></p>
+                            <p><code>{{part_brand}}</code></p>
+                            <p><code>{{part_condition}}</code></p>
+                            <p><code>{{part_description}}</code></p>
+                            <p><code>{{part_id}}</code></p>
+                            <p><code>{{date_created}}</code></p>
+                            <p><code>{{agreement_id}}</code></p>
+                            <p><code>{{fee_percentage}}</code></p>
+                            <p><code>{{commission_rate}}</code></p>
+                            <p><code>{{referral_source}}</code></p>
+                            <p><code>{{bank_name}}</code></p>
+                        </div>
+                        <p style="margin-top: 15px;"><strong>Usage:</strong> These fields are automatically populated when agreements are generated from intake forms.</p>
+                    </div>
+
+                    <!-- Bulk Operations Section -->
+                    <h3>Bulk Operations</h3>
+                    <div style="background: white; border-radius: 10px; padding: 20px; margin-top: 20px; border: 2px solid #e0e0e0;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <h4>Generate Multiple Agreements</h4>
+                                <p style="font-size: 0.9em; color: #666; margin: 10px 0;">Create agreements for multiple partners at once</p>
+                                <button class="action-btn">Bulk Generate</button>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <h4>Send Reminder Emails</h4>
+                                <p style="font-size: 0.9em; color: #666; margin: 10px 0;">Send reminders to all pending signatures</p>
+                                <button class="action-btn">Send Reminders</button>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <h4>Export Agreement Data</h4>
+                                <p style="font-size: 0.9em; color: #666; margin: 10px 0;">Download CSV of all agreement statuses</p>
+                                <button class="action-btn">Export Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template Preview Modal -->
+                <div id="templateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 15px; padding: 30px; max-width: 900px; width: 90%; max-height: 80%; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 id="templateModalTitle">Agreement Template Preview</h3>
+                            <button onclick="closeTemplateModal()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">✕ Close</button>
+                        </div>
+                        <div id="templateModalContent" style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #f8f9fa; font-family: 'Times New Roman', serif; line-height: 1.6;">
+                            <!-- Template content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations Section -->
+                <div id="internal-integrations" class="section">
+                    <h2>Integration Management</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>SignWell</h3>
+                            <p>E-signature platform</p>
+                            <div style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Connected</div>
+                            <button class="action-btn">Configure</button>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Airtable</h3>
+                            <p>Inventory management system</p>
+                            <div style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Connected</div>
+                            <button class="action-btn">Configure</button>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Zapier</h3>
+                            <p>Workflow automation hub</p>
+                            <div style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Connected</div>
+                            <button class="action-btn">View Zaps</button>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>QuickBooks</h3>
+                            <p>Accounting integration</p>
+                            <div style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Connected</div>
+                            <button class="action-btn">Configure</button>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Email Service</h3>
+                            <p>Automated notifications</p>
+                            <div style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Connected</div>
+                            <button class="action-btn">Configure</button>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>SMS Gateway</h3>
+                            <p>Text message reminders</p>
+                            <div style="background: #f8d7da; color: #721c24; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin: 15px 0;">Not Connected</div>
+                            <button class="action-btn">Connect</button>
+                        </div>
+                    </div>
+
+                    <h3>Zapier Automation Workflows</h3>
+                    <div style="background: white; border-radius: 10px; padding: 20px; margin-top: 20px; border: 2px solid #e0e0e0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                            <div>
+                                <strong>🎯 Partner Intake → Airtable Inventory</strong>
+                                <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">When partner submits intake form, automatically create Airtable records for each part</p>
+                                <div style="margin-top: 8px;">
+                                    <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 8px;">Trigger: New Intake</span>
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">Action: Create Airtable Record</span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: #4CAF50; font-weight: bold;">Active</span>
+                                <div style="margin-top: 5px;">
+                                    <button class="action-btn" onclick="showAirtableZapDetails()">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                            <div>
+                                <strong>📄 Agreement Signed → Update Airtable Status</strong>
+                                <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">When SignWell agreement is signed, update part status to "Ready for Sale"</p>
+                                <div style="margin-top: 8px;">
+                                    <span style="background: #fff3e0; color: #f57c00; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 8px;">Trigger: SignWell Signed</span>
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">Action: Update Airtable</span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: #4CAF50; font-weight: bold;">Active</span>
+                                <div style="margin-top: 5px;">
+                                    <button class="action-btn">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                            <div>
+                                <strong>💰 Part Sold → Update Multiple Systems</strong>
+                                <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">When part is marked sold in Airtable, update partner dashboard and trigger payments</p>
+                                <div style="margin-top: 8px;">
+                                    <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 8px;">Trigger: Airtable Status Change</span>
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">Action: Multi-step Update</span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: #4CAF50; font-weight: bold;">Active</span>
+                                <div style="margin-top: 5px;">
+                                    <button class="action-btn">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0;">
+                            <div>
+                                <strong>📊 Daily Sync → Dashboard Updates</strong>
+                                <p style="color: #666; font-size: 0.9em; margin: 5px 0 0 0;">Daily sync between Airtable and partner/internal dashboards for real-time data</p>
+                                <div style="margin-top: 8px;">
+                                    <span style="background: #f3e5f5; color: #7b1fa2; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 8px;">Trigger: Schedule (Daily)</span>
+                                    <span style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">Action: Sync Data</span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: #4CAF50; font-weight: bold;">Active</span>
+                                <div style="margin-top: 5px;">
+                                    <button class="action-btn">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Airtable Integration Details -->
+                    <div id="airtable-details" style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin-top: 20px; display: none;">
+                        <h4>🎯 Airtable Integration Details</h4>
+                        <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                            <h5>Intake Form → Airtable Workflow</h5>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                                <div style="background: #e3f2fd; padding: 10px; border-radius: 6px;">
+                                    <strong>1. Form Submission</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Partner submits intake form with parts details</p>
+                                </div>
+                                <div style="background: #fff3e0; padding: 10px; border-radius: 6px;">
+                                    <strong>2. Zapier Trigger</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">New form submission triggers Zapier automation</p>
+                                </div>
+                                <div style="background: #e8f5e8; padding: 10px; border-radius: 6px;">
+                                    <strong>3. Airtable Creation</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Creates record for each part with all details</p>
+                                </div>
+                                <div style="background: #f3e5f5; padding: 10px; border-radius: 6px;">
+                                    <strong>4. Status Update</strong>
+                                    <p style="font-size: 0.9em; margin-top: 5px;">Sets initial status to "Agreement Pending"</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0;">
+                            <h5>Airtable Fields Created from Intake Form</h5>
+                            <div style="columns: 2; gap: 20px;">
+                                <ul style="margin: 0;">
+                                    <li><strong>Partner ID:</strong> KICK-IND-001</li>
+                                    <li><strong>Partner Name:</strong> John Smith</li>
+                                    <li><strong>Part ID:</strong> PA-001, PA-002</li>
+                                    <li><strong>Part Type:</strong> Suspension, Brakes</li>
+                                    <li><strong>Brand:</strong> KW, Brembo</li>
+                                    <li><strong>Product Name:</strong> V3 Coilover Kit</li>
+                                    <li><strong>Condition:</strong> Excellent, Like New</li>
+                                    <li><strong>Description:</strong> Notes from form</li>
+                                    <li><strong>Photos:</strong> Uploaded image URLs</li>
+                                    <li><strong>Status:</strong> Agreement Pending</li>
+                                    <li><strong>Referral Source:</strong> QR-SHOP-001</li>
+                                    <li><strong>Commission Due:</strong> 5% to AutoShop Pro</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 8px; padding: 15px;">
+                            <h5>Airtable Status Workflow</h5>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: #fff3cd; color: #856404; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Agreement Pending</span>
+                                <span style="font-size: 1.5em;">→</span>
+                                <span style="background: #cce5ff; color: #004085; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Ready for Sale</span>
+                                <span style="font-size: 1.5em;">→</span>
+                                <span style="background: #e7f3ff; color: #0066cc; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Listed for Sale</span>
+                                <span style="font-size: 1.5em;">→</span>
+                                <span style="background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 20px; font-size: 0.9em;">Sold</span>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="action-btn" onclick="hideAirtableDetails()">Close Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div id="internal-analytics" class="section">
+                    <h2>Analytics & Reports</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card earnings-card">
+                            <div class="dashboard-number">$87,432</div>
+                            <div>Monthly Revenue</div>
+                        </div>
+                        <div class="dashboard-card parts-card">
+                            <div class="dashboard-number">$4,375</div>
+                            <div>Referral Commissions Paid</div>
+                        </div>
+                        <div class="dashboard-card sales-card">
+                            <div class="dashboard-number">73%</div>
+                            <div>Parts Sell-Through Rate</div>
+                        </div>
+                        <div class="dashboard-card pending-card">
+                            <div class="dashboard-number">18</div>
+                            <div>Avg. Days to Sale</div>
+                        </div>
+                    </div>
+
+                    <h3>Referral Performance</h3>
+                    <table class="partners-table">
+                        <thead>
+                            <tr>
+                                <th>Referrer</th>
+                                <th>Type</th>
+                                <th>Referrals This Month</th>
+                                <th>Commission Earned</th>
+                                <th>Conversion Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>AutoShop Pro<br><small>QR-SHOP-001</small></td>
+                                <td>Shop Partner</td>
+                                <td>8 referrals</td>
+                                <td>$427.50</td>
+                                <td>75%</td>
+                            </tr>
+                            <tr>
+                                <td>Mike Johnson<br><small>QR-AMB-001</small></td>
+                                <td>Ambassador</td>
+                                <td>5 referrals</td>
+                                <td>$189.25</td>
+                                <td>60%</td>
+                            </tr>
+                            <tr>
+                                <td>TuneMax Garage<br><small>QR-SHOP-015</small></td>
+                                <td>Shop Partner</td>
+                                <td>12 referrals</td>
+                                <td>$634.80</td>
+                                <td>83%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        Action completed successfully!
+    </div>
+
+    <script>
+        let currentDashboard = 'partner';
+
+        function switchDashboard(dashboard) {
+            // Hide all dashboards
+            document.querySelectorAll('.dashboard').forEach(d => d.classList.remove('active'));
+            
+            // Remove active class from dashboard buttons
+            document.querySelectorAll('.dashboard-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected dashboard
+            document.getElementById(dashboard + '-dashboard').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            currentDashboard = dashboard;
+        }
+
+        function showPartnerSection(sectionId) {
+            // Hide all partner sections
+            document.querySelectorAll('#partner-dashboard .section').forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from nav buttons
+            document.querySelectorAll('#partner-dashboard .nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById('partner-' + sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function showInternalSection(sectionId) {
+            // Hide all internal sections
+            document.querySelectorAll('#internal-dashboard .section').forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from nav buttons
+            document.querySelectorAll('#internal-dashboard .nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            if (sectionId === 'agreement-generation') {
+                document.getElementById('agreement-generation').classList.add('active');
+            } else {
+                document.getElementById('internal-' + sectionId).classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function showPartnerDetails(partnerId) {
+            // Hide all internal sections
+            document.querySelectorAll('#internal-dashboard .section').forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from nav buttons
+            document.querySelectorAll('#internal-dashboard .nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show partner details section
+            document.getElementById('partner-details').classList.add('active');
+            
+            // Update title based on partner
+            const titles = {
+                'john-smith': 'Partner Details - John Smith (KICK-IND-001)',
+                'autoshop-pro': 'Partner Details - AutoShop Pro (KICK-SHOP-001)',
+                'sarah-wilson': 'Partner Details - Sarah Wilson (KICK-IND-002)'
+            };
+            
+            document.getElementById('partner-details-title').textContent = titles[partnerId] || 'Partner Details';
+        }
+
+        function showAirtableZapDetails() {
+            const details = document.getElementById('airtable-details');
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function previewTemplate(templateType) {
+            const modal = document.getElementById('templateModal');
+            const modalTitle = document.getElementById('templateModalTitle');
+            const modalContent = document.getElementById('templateModalContent');
+            
+            let title = '';
+            let content = '';
+            
+            if (templateType === 'individual-partner') {
+                title = 'Individual Partner Agreement Template';
+                content = `
+                    <h3 style="text-align: center; margin-bottom: 20px;">KICKBACK INDIVIDUAL PARTNER AGREEMENT</h3>
+                    
+                    <p><strong>Date:</strong> {{date_created}}</p>
+                    <p><strong>Partner:</strong> {{partner_name}} ({{partner_email}})</p>
+                    <p><strong>Partner ID:</strong> {{partner_id}}</p>
+                    <p><strong>Company:</strong> Kickback (get@kickbackforyou.com)</p>
+                    
+                    <h4>PURPOSE OF THE AGREEMENT</h4>
+                    <p>The Parties aim to work together in the identifying, gathering, sale of Automotive Parts, which the Parties will split profits from.</p>
+                    
+                    <h4>SERVICES</h4>
+                    <p>The Individual Partner will provide the Company with the desired Automotive Part to be sold to buyers.</p>
+                    
+                    <h4>CONSIGNMENT</h4>
+                    <p>Products will be accepted from Individual Partners by the Company on a consignment-basis. The Company will accept, and hold, the products until the sale of the product, unless the Individual Partner cancels this agreement and seeks the return of the product. During this Consignment time, the Company will have custody of the product. In signing this agreement, each Individual Partner confirms that they have the right of ownership of the product and also have the right to sell the product.</p>
+                    
+                    <h4>RELEASE</h4>
+                    <p>The Individual Partner may be released from this contract and have a part returned to them after giving written notice via email to The Company and allowing seven (7) business days to have the part "taken down" from all web, or app, advertising.</p>
+                    
+                    <h4>EXCLUSIVITY</h4>
+                    <p>Upon signing this agreement, Individual Partners agree that the Company has the sole right to sell the product and also agree to not advertise the product in any other venue while under contract with Kickback.</p>
+                    
+                    <h4>WARRANTIES</h4>
+                    <ul>
+                        <li><strong>Warranty of Title:</strong> The Individual Partner represents and warrants that they are the true and lawful owner of the product conveyed by this agreement.</li>
+                        <li><strong>Authority to Sign Agreement:</strong> The Individual Partner hereby warrants that they have the authority necessary to sign this agreement.</li>
+                        <li><strong>Condition Warranty:</strong> The Individual Partner warrants that the part to be sold is new or gently used.</li>
+                    </ul>
+                    
+                    <h4>FEE STRUCTURE</h4>
+                    <p>Individual Partners will not have any upfront or recurring fees. The Company will retain a fee based on the selling price:</p>
+                    <ul>
+                        <li>For $250.00 or less: Company receives 40% of gross sale</li>
+                        <li>For $250.01 to $500.00: Company receives 35% of gross sale</li>
+                        <li>For $500.01 and above: Company receives 30% of gross sale</li>
+                    </ul>
+                    
+                    <h4>PAYMENT TERMS</h4>
+                    <p>Payment to Individual Partners will be made bi-weekly after confirmation of sale, which can take up to 7-10 business days. Payment will be remitted 7 days after the return window has closed.</p>
+                    
+                    <h4>REFERRAL COMMISSION</h4>
+                    <p><strong>Referral Source:</strong> {{referral_source}}<br>
+                    <strong>Commission Rate:</strong> {{commission_rate}}% will be paid to the referring party on each sale.</p>
+                    
+                    <h4>BANK INFORMATION</h4>
+                    <p><strong>Bank Name:</strong> {{bank_name}}<br>
+                    <strong>Account Name:</strong> {{partner_name}}<br>
+                    <strong>Account Number:</strong> [Protected]<br>
+                    <strong>Routing Number:</strong> [Protected]</p>
+                    
+                    <h4>GOVERNING LAW</h4>
+                    <p>This agreement will be governed by the laws of the state of Virginia. Any disputes arising from this contract will be arbitrated in the State of Virginia within the County of Fairfax.</p>
+                    
+                    <div style="margin-top: 30px; border-top: 2px solid #667eea; padding-top: 20px;">
+                        <p><strong>Digital Signature Required:</strong></p>
+                        <p>☐ Partner Signature: _________________ Date: _________</p>
+                        <p>☐ Kickback Representative: _________________ Date: _________</p>
+                    </div>
+                `;
+            } else if (templateType === 'shop-partner') {
+                title = 'Shop Partner Agreement Template';
+                content = `
+                    <h3 style="text-align: center; margin-bottom: 20px;">KICKBACK SHOP PARTNER AGREEMENT</h3>
+                    
+                    <p><strong>Date:</strong> {{date_created}}</p>
+                    <p><strong>Shop Partner:</strong> {{partner_name}}</p>
+                    <p><strong>Shop ID:</strong> {{partner_id}}</p>
+                    <p><strong>Contact:</strong> {{partner_email}} | {{partner_phone}}</p>
+                    
+                    <h4>PARTNERSHIP BENEFITS</h4>
+                    <ul>
+                        <li><strong>Referral Commissions:</strong> 5% commission on all parts consigned through your referrals</li>
+                        <li><strong>QR Code:</strong> Unique tracking code for all referrals</li>
+                        <li><strong>Dashboard Access:</strong> Full garage management application</li>
+                        <li><strong>Marketing Materials:</strong> Branded cards and promotional materials</li>
+                    </ul>
+                    
+                    <h4>CHARTER PARTNER BENEFITS (First 40 shops per state)</h4>
+                    <ul>
+                        <li><strong>FREE Subscription:</strong> No monthly $149.99 fee</li>
+                        <li><strong>FREE Installation:</strong> No $995 setup fee</li>
+                        <li><strong>Grandfathered Status:</strong> Benefits maintained permanently</li>
+                    </ul>
+                    
+                    <h4>REGULAR SHOP PARTNER FEES (After 40 per state)</h4>
+                    <ul>
+                        <li><strong>Monthly Subscription:</strong> $149.99/month</li>
+                        <li><strong>Installation Fee:</strong> $995 one-time setup</li>
+                        <li><strong>Same Commission Structure:</strong> 5% on all referrals</li>
+                    </ul>
+                    
+                    <h4>REFERRAL TRACKING</h4>
+                    <p>Your unique QR code: <strong>{{referral_source}}</strong></p>
+                    <p>All customers who scan your QR code and consign parts will generate 5% commission for your shop on every sale.</p>
+                    
+                    <h4>COMMISSION STRUCTURE</h4>
+                    <p>Shop Partners earn 5% commission on the gross sale price of all parts referred through their QR code. Example:</p>
+                    <ul>
+                        <li>$1,000 part sale = $50 commission to shop</li>
+                        <li>$500 part sale = $25 commission to shop</li>
+                        <li>$250 part sale = $12.50 commission to shop</li>
+                    </ul>
+                    
+                    <h4>PAYMENT TERMS</h4>
+                    <p>Commission payments made bi-weekly via bank wire transfer along with partner payments.</p>
+                    
+                    <h4>DASHBOARD FEATURES</h4>
+                    <ul>
+                        <li>Track all your referrals and commissions</li>
+                        <li>Manage shop operations and customer data</li>
+                        <li>Access Kickback's parts inventory</li>
+                        <li>Generate reports and analytics</li>
+                    </ul>
+                    
+                    <div style="margin-top: 30px; border-top: 2px solid #667eea; padding-top: 20px;">
+                        <p><strong>Digital Signature Required:</strong></p>
+                        <p>☐ Shop Partner Signature: _________________ Date: _________</p>
+                        <p>☐ Kickback Representative: _________________ Date: _________</p>
+                    </div>
+                `;
+            } else if (templateType === 'parts-agreement') {
+                title = 'Parts Agreement Template';
+                content = `
+                    <h3 style="text-align: center; margin-bottom: 20px;">KICKBACK PARTS CONSIGNMENT AGREEMENT</h3>
+                    
+                    <p><strong>Agreement ID:</strong> {{agreement_id}}</p>
+                    <p><strong>Part ID:</strong> {{part_id}}</p>
+                    <p><strong>Date:</strong> {{date_created}}</p>
+                    <p><strong>Partner:</strong> {{partner_name}} ({{partner_id}})</p>
+                    
+                    <h4>PART DETAILS</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold;">Type:</td>
+                            <td style="padding: 8px;">{{part_type}}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold;">Brand:</td>
+                            <td style="padding: 8px;">{{part_brand}}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold;">Product Name:</td>
+                            <td style="padding: 8px;">{{part_name}}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold;">Condition:</td>
+                            <td style="padding: 8px;">{{part_condition}}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold;">Description:</td>
+                            <td style="padding: 8px;">{{part_description}}</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>CONSIGNMENT TERMS</h4>
+                    <p>The Individual Partner confirms ownership and right to sell this specific automotive part. The Company will hold this part until sale or until the Partner requests return with 7 business days notice.</p>
+                    
+                    <h4>FEE STRUCTURE FOR THIS PART</h4>
+                    <p>Based on the estimated sale value, the fee structure will be:</p>
+                    <ul>
+                        <li>If sold for $250 or less: Partner keeps 60%, Kickback retains 40%</li>
+                        <li>If sold for $250.01-$500: Partner keeps 65%, Kickback retains 35%</li>
+                        <li>If sold for $500.01+: Partner keeps 70%, Kickback retains 30%</li>
+                    </ul>
+                    
+                    <h4>RETURN POLICY</h4>
+                    <p>Buyers have 7 business days to return this product from delivery confirmation. Returns must be unopened and unused, with a 10% restocking fee applied. The partner may request return of their part with 7 days written notice.</p>
+                    
+                    <h4>INSURANCE & LIABILITY</h4>
+                    <p>While in possession of the product, the Company will maintain insurance on the part, in case of a catastrophic event. The Company is not responsible for any item's malfunctioning.</p>
+                    
+                    <h4>REFERRAL COMMISSION</h4>
+                    <p><strong>This part was referred by:</strong> {{referral_source}}<br>
+                    <strong>Commission:</strong> {{commission_rate}}% of sale price will be paid to referring party</p>
+                    
+                    <div style="margin-top: 30px; border-top: 2px solid #667eea; padding-top: 20px;">
+                        <p><strong>By signing below, the Partner confirms:</strong></p>
+                        <ul>
+                            <li>Legal ownership of the described part</li>
+                            <li>Authority to consign this part for sale</li>
+                            <li>Accuracy of the condition description</li>
+                            <li>Agreement to the terms stated above</li>
+                        </ul>
+                        <br>
+                        <p>☐ Partner Signature: _________________ Date: _________</p>
+                        <p>☐ Kickback Representative: _________________ Date: _________</p>
+                    </div>
+                `;
+            } else if (templateType === 'ambassador-agreement') {
+                title = 'Ambassador Agreement Template';
+                content = `
+                    <h3 style="text-align: center; margin-bottom: 20px;">KICKBACK AMBASSADOR AGREEMENT</h3>
+                    
+                    <p><strong>Date:</strong> {{date_created}}</p>
+                    <p><strong>Ambassador:</strong> {{partner_name}}</p>
+                    <p><strong>Ambassador ID:</strong> {{partner_id}}</p>
+                    <p><strong>Contact:</strong> {{partner_email}} | {{partner_phone}}</p>
+                    <p><strong>QR Code:</strong> {{referral_source}}</p>
+                    
+                    <h4>AMBASSADOR BENEFITS AND RESPONSIBILITIES</h4>
+                    <ul>
+                        <li><strong>Branding and Tools:</strong> Ambassadors will be provided a branded Kickback Shirt, branded Kickback Cards, and a unique Kickback QR Code/Identifier.</li>
+                        <li><strong>Commission Structure:</strong> Ambassadors will receive 5% from sales generated through their unique QR code.</li>
+                        <li><strong>Payment Terms:</strong> Ambassadors will be paid each time that their work leads to a sale produced for an Individual Partner or Shop Partner, on a per-sale basis.</li>
+                    </ul>
+                    
+                    <h4>COMMISSION EXAMPLES</h4>
+                    <p>Your 5% commission on various sale amounts:</p>
+                    <ul>
+                        <li>$1,000 part sale = $50 commission</li>
+                        <li>$500 part sale = $25 commission</li>
+                        <li>$250 part sale = $12.50 commission</li>
+                        <li>$100 part sale = $5.00 commission</li>
+                    </ul>
+                    
+                    <h4>QR CODE TRACKING</h4>
+                    <p>Your unique QR code <strong>{{referral_source}}</strong> must be used by customers when they submit their parts intake form. This ensures you receive proper credit and commission for each referral.</p>
+                    
+                    <h4>MARKETING MATERIALS PROVIDED</h4>
+                    <ul>
+                        <li>Branded Kickback shirt with ambassador designation</li>
+                        <li>Business cards with your unique QR code</li>
+                        <li>Digital assets for social media promotion</li>
+                        <li>Access to ambassador dashboard for tracking</li>
+                    </ul>
+                    
+                    <h4>CONDUCT OF AMBASSADORS</h4>
+                    <p>While representing Kickback, Ambassadors will be held to a standard of conduct and code of honor. Any findings of actions that place Kickback in bad light, will be cause for suspension and/or cancellation of your ambassador status.</p>
+                    
+                    <h4>PAYMENT SCHEDULE</h4>
+                    <p>Commission payments are made bi-weekly via bank wire transfer. You will receive detailed statements showing all referred sales and earned commissions.</p>
+                    
+                    <h4>TAXES</h4>
+                    <p>All Ambassadors are required to sign a 1099 Tax Form and will be responsible for the handling of all taxes incurred from payments from Kickback.</p>
+                    
+                    <h4>INDEMNIFICATION</h4>
+                    <p>Ambassadors agree to indemnify and hold harmless Kickback and its crew, agents, assigns, and independent vendors for any injury, property damage, liability, claim or other cause of action arising out of, or related to, any Services provided herein.</p>
+                    
+                    <h4>GOVERNING LAW</h4>
+                    <p>This agreement will be governed by the laws of the state of Virginia. Any disputes arising from this contract will be arbitrated in the State of Virginia within the County of Fairfax.</p>
+                    
+                    <div style="margin-top: 30px; border-top: 2px solid #667eea; padding-top: 20px;">
+                        <p><strong>Digital Signature Required:</strong></p>
+                        <p>☐ Ambassador Signature: _________________ Date: _________</p>
+                        <p>☐ Kickback Representative: _________________ Date: _________</p>
+                    </div>
+                `;
+            }
+            
+            modalTitle.textContent = title;
+            modalContent.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').style.display = 'none';
+        }
+
+        function showAgreementGeneration(partnerId) {
+            // This now redirects to the partner details page which shows the agreement generation
+            showPartnerDetails(partnerId);
+        }
+
+        function addPartItem() {
+            const container = document.getElementById('partsContainer');
+            
+            const newPart = document.createElement('div');
+            newPart.className = 'part-item';
+            newPart.innerHTML = `
+                <button type="button" class="remove-part-btn" onclick="removePart(this)">Remove</button>
+                <div class="form-grid">
+                    <div>
+                        <div class="form-group">
+                            <label>Type of Part</label>
+                            <select>
+                                <option>Engine</option>
+                                <option>Transmission</option>
+                                <option>Suspension</option>
+                                <option>Brakes</option>
+                                <option>Exhaust</option>
+                                <option>Exterior Body Panel</option>
+                                <option>Interior Trim</option>
+                                <option>Electrical Component</option>
+                                <option>Lighting</option>
+                                <option>Wheels/Tires</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" placeholder="e.g., OEM, KW, Bilstein">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <input type="text" placeholder="e.g., V3 Coilover Kit">
+                        </div>
+                        <div class="form-group">
+                            <label>Condition</label>
+                            <select>
+                                <option>New</option>
+                                <option>Like New</option>
+                                <option>Excellent</option>
+                                <option>Good</option>
+                                <option>Fair</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea rows="3" placeholder="e.g., Used for 3 months, minor rust on bracket"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Photos (Max 5)</label>
+                    <div class="file-upload-area">
+                        <p>📷 Click to upload photos or drag and drop</p>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newPart);
+        }
+
+        function removePart(button) {
+            button.parentElement.remove();
+        }
+
+        function submitPartnerIntake() {
+            showNotification('Parts submitted for consignment! You will receive agreements to sign via email.');
+            
+            // Simulate switching to agreements section after submission
+            setTimeout(() => {
+                showPartnerSection('agreements');
+            }, 2000);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        // Simulate QR code detection on page load
+        window.onload = function() {
+            // Check if user came from QR code
+            const urlParams = new URLSearchParams(window.location.search);
+            const qrCode = urlParams.get('ref');
+            
+            // For demo purposes, 30% chance of QR referral
+            const isQRReferral = qrCode || Math.random() < 0.3;
+            
+            if (isQRReferral) {
+                // QR Code Referral Flow
+                document.getElementById('qrCodeBanner').style.display = 'block';
+                document.getElementById('directVisitSection').style.display = 'none';
+                document.getElementById('qrReferralInfo').style.display = 'block';
+                document.getElementById('directReferralInfo').style.display = 'none';
+                
+                // Random demo referrer
+                const referrers = [
+                    { name: 'AutoShop Pro', rate: '5%', id: 'QR-SHOP-001' },
+                    { name: 'Mike Johnson (Ambassador)', rate: '5%', id: 'QR-AMB-001' },
+                    { name: 'TuneMax Garage', rate: '5%', id: 'QR-SHOP-015' },
+                    { name: 'Lisa Chen (Referral Partner)', rate: '3%', id: 'QR-REF-003' }
+                ];
+                const randomReferrer = referrers[Math.floor(Math.random() * referrers.length)];
+                
+                // Update display elements
+                document.getElementById('referrerName').textContent = `Referred by: ${randomReferrer.name}`;
+                document.getElementById('commissionText').textContent = `Your referrer will earn ${randomReferrer.rate} commission on your sales!`;
+                document.getElementById('qrReferralDisplay').value = `${randomReferrer.name} (${randomReferrer.id})`;
+                
+                // Make referral source field not required
+                document.getElementById('partnerReferralSource').removeAttribute('required');
+                
+            } else {
+                // Direct Visit Flow
+                document.getElementById('qrCodeBanner').style.display = 'none';
+                document.getElementById('directVisitSection').style.display = 'block';
+                document.getElementById('qrReferralInfo').style.display = 'none';
+                document.getElementById('directReferralInfo').style.display = 'block';
+                
+                // Make sure referral source is required for direct visits
+                document.getElementById('partnerReferralSource').setAttribute('required', 'required');
+            }
+        };
+    </script>
+</body>
+</html>
